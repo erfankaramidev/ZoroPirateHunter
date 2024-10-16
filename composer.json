@@ -1,0 +1,20 @@
+{
+  "name": "erfankaramidev/zoropiratehunter",
+  "description": "A Telegram bot for user management, providing tools in order to manage groups efficiently.",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Erfan Karami",
+      "email": "erfankaramidev@proton.me"
+    }
+  ],
+  "require": {
+    "nutgram/nutgram": "^4.27",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/"
+    }
+  }
+}
