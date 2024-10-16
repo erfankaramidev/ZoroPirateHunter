@@ -2,20 +2,33 @@
 
 namespace App\Database;
 
+use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;
 
 class Database
 {
-    private PDO $pdo;
+    private static ?PDO $pdo = null;
 
     private PDOStatement $stmt;
 
     /**
-     * Creates a new connection to the database via PDO
+     * Gets the PDO instance
      */
+
     public function __construct()
+    {
+        if (self::$pdo === null) {
+            $this->connect();
+        }
+    }
+
+    /**
+     * Establishes a new connection to the database if one doesn't exist
+     * @return void
+     */
+    private function connect()
     {
         $dsn = "mysql:host={$_ENV['DB_HOST']};dbname={$_ENV['DB_NAME']}";
         $options = [
@@ -24,27 +37,56 @@ class Database
         ];
 
         try {
-            $this->pdo = new PDO($dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $options);
+            self::$pdo = new PDO($dsn, $_ENV['DB_USERNAME'], $_ENV['DB_PASSWORD'], $options);
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+            throw new Exception("Connection failed: " . $e->getMessage());
         }
     }
 
+    /**
+     * Prepares and executes a query with optional parameters
+     * @param string $query
+     * @param array $params
+     * @throws \Exception
+     * @return \App\Database\Database
+     */
     public function query(string $query, array $params = []): Database
     {
-        $this->stmt = $this->pdo->prepare($query);
-        $this->stmt->execute($params);
+        try {
+            $this->stmt = self::$pdo->prepare($query);
+            $this->stmt->execute($params);
+        } catch (PDOException $e) {
+            throw new Exception("Query failed: " . $e->getMessage());
+        }
 
         return $this;
     }
 
-    public function find(): array|bool
+    /**
+     * Fetches a single record from the executed query
+     * @throws \Exception
+     * @return array|false
+     */
+    public function find(): array|false
     {
-        return $this->stmt->fetch();
+        try {
+            return $this->stmt->fetch();
+        } catch (PDOException $e) {
+            throw new Exception("Fetch failed: " . $e->getMessage());
+        }
     }
 
-    public function findAll(): array|bool
+    /**
+     * Fetches all records from the executed query
+     * @throws \Exception
+     * @return array|false
+     */
+    public function findAll(): array|false
     {
-        return $this->stmt->fetchAll();
+        try {
+            return $this->stmt->fetchAll();
+        } catch (PDOException $e) {
+            throw new Exception("Fetch failed: " . $e->getMessage());
+        }
     }
 }
