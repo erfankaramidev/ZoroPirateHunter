@@ -52,10 +52,16 @@ class Database
      */
     public function query(string $query, array $params = []): Database
     {
+        self::$pdo->beginTransaction();
+
         try {
             $this->stmt = self::$pdo->prepare($query);
             $this->stmt->execute($params);
+
+            self::$pdo->commit();
         } catch (PDOException $e) {
+            self::$pdo->rollBack();
+
             throw new Exception("Query failed: " . $e->getMessage());
         }
 
