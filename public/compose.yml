@@ -1,0 +1,24 @@
+services:
+  app:
+    image: php:8.3.13-apache
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    volumes:
+      - ./app:/var/www/html 
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: lamp_db
+    volumes:
+      - ./mysql_data:/var/lib/mysql #this line maps the content of ./mysql_data in your pc to the /var/lib/mysql of the container
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80" #this line maps your pc port to the container port
+    depends_on:
+      - db #this line links this container to the db container
+    environment:
+      PMA_HOST: db

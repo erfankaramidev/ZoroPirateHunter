@@ -1,0 +1,36 @@
+services:
+  web:
+    image: php:8.3-apache
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+    volumes:
+      - ./public:/var/www/html
+    build: .
+  db:
+    ports:
+      - "3306:3306"
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: zoropiratehunter
+    volumes:
+      - ./db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "http"
+      - "web:80"
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    ports:
+      - 4040:4040
