@@ -15,6 +15,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: zoropiratehunter
+      TZ: "Asia/Tehran"
     volumes:
       - ./db_data:/var/lib/mysql
   phpmyadmin:
