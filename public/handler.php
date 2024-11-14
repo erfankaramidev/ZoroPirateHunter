@@ -1,7 +1,7 @@
 <?php
 
 use SergiX44\Nutgram\Nutgram;
-use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle};
+use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle};
 use App\Middlewares\{IsAdminMiddleware};
 use App\CallbackQueryData\{BanCallback, MuteCallback, WarningCallback};
 
@@ -59,6 +59,50 @@ $bot->group(function (Nutgram $bot) {
         $muteHandle->unmuteByUsername($username);
     });
 })->middleware(IsAdminMiddleware::class);
+
+// Warnings
+$bot->group(function (Nutgram $bot) {
+    $bot->onText('/warn(?!\s+@)(?:\s+(.*))?', function (Nutgram $bot, $reason) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->warnByReply(reason: $reason ?? '');
+    });
+    $bot->onText('/warn @{username}(?:\s+(.*))?', function (Nutgram $bot, string $username, $reason) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->warnByUsername($username, reason: $reason ?? '');
+    });
+    $bot->onText('/dwarn(?:\s+(.*))?', function (Nutgram $bot, $reason) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->warnByReply(true, $reason ?? '');
+    });
+    $bot->onCommand('rmwarn', function (Nutgram $bot) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->removeWarnByReply();
+    });
+    $bot->onText('/rmwarn @{username}', function (Nutgram $bot, string $username) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->removeWarnByUsername($username);
+    });
+    $bot->onText('/resetwarn', function (Nutgram $bot) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->resetWarnByReply();
+    });
+    $bot->onText('/resetwarn @{username}', function (Nutgram $bot, string $username) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->resetWarnByUsername($username);
+    });
+})->middleware(IsAdminMiddleware::class);
+
+$bot->onCommand('warns', function (Nutgram $bot) {
+    $warningHandler = new WarningHandle($bot);
+    $warningHandler->warns();
+});
+$bot->onCallbackQueryData("warn:rmwarn{userId}", function (Nutgram $bot, $userId) {
+    $warningHandler = new WarningHandle($bot);
+    $warningHandler->removeWarnByCallback($userId);
+})->middleware(function (Nutgram $bot, $next) {
+    $adminMiddleware = new IsAdminMiddleware(true);
+    $adminMiddleware($bot, $next);
+});
 
 // Register new users to the database
 $bot->onMessage(function (Nutgram $bot) {
