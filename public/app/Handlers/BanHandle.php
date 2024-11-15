@@ -12,8 +12,10 @@ class BanHandle
     {
     }
 
-    public function banByReply(bool $deleteMessage = false)
+    public function banByReply(?string $reason, bool $deleteMessage = false)
     {
+        $db = new Database();
+
         $repliedMessageUserId = $this->bot->message()->reply_to_message->from->id ?? null;
 
         if (! $repliedMessageUserId) {
@@ -37,15 +39,23 @@ class BanHandle
             }
         }
 
+        $isBanned = $db->query("SELECT * FROM bans WHERE user_id = ?", [
+            $repliedMessageUserId
+        ])->find();
+
+        if ($isBanned)
+            $this->deleteFromDatabase($repliedMessageUserId);
+
         $banUser = $this->bot->banChatMember($this->bot->chatId(), $repliedMessageUserId);
 
         if ($banUser) {
-            $this->saveToDatabase($repliedMessageUserId);
+            $this->saveToDatabase($repliedMessageUserId, $reason);
 
             $name = $this->bot->message()->reply_to_message->from->first_name;
+            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                '<a href="tg://user?id=' . $repliedMessageUserId . '">' . $name . '</a> is banned. Good, that’s less nonsense to deal with. 🚫',
+                "<a href=\"tg://user?id=$repliedMessageUserId\">$name</a> is banned. Good, that’s less nonsense to deal with. 🚫\nReason:\n$reason",
                 parse_mode: ParseMode::HTML,
                 reply_to_message_id: $this->bot->messageId()
             );
@@ -56,7 +66,7 @@ class BanHandle
             $this->bot->sendMessage("Tch. There was an error with the task 😤📝", reply_to_message_id: $this->bot->messageId());
     }
 
-    public function banByUsername(string $username)
+    public function banByUsername(string $username, ?string $reason)
     {
         $db = new Database();
 
@@ -95,11 +105,12 @@ class BanHandle
         $banUser = $this->bot->banChatMember($this->bot->chatId(), $user['user_id']);
 
         if ($banUser) {
-            $this->saveToDatabase($user['user_id']);
+            $this->saveToDatabase($user['user_id'], $reason);
+
+            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                '<a href="tg://user?id=' . $user['user_id'] . '">@' . $user['username'] . '</a> is banned. Good, that’s less nonsense to deal with. 🚫',
-                parse_mode: ParseMode::HTML,
+                "@{$user['username']} is banned. Good, that’s less nonsense to deal with. 🚫\nReason:\n$reason",
                 reply_to_message_id: $this->bot->messageId()
             );
         } else
@@ -162,12 +173,13 @@ class BanHandle
             $this->bot->sendMessage("Tch. There was an error with the task 😤📝", reply_to_message_id: $this->bot->messageId());
     }
 
-    private function saveToDatabase(string|int $userId)
+    private function saveToDatabase(string|int $userId, ?string $reason)
     {
         $db = new Database();
 
-        $db->query("INSERT INTO bans (user_id) VALUES (?)", [
-            $userId
+        $db->query("INSERT INTO bans (user_id, reason) VALUES (?, ?)", [
+            $userId,
+            $reason
         ]);
     }
 

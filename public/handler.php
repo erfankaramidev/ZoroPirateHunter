@@ -14,21 +14,21 @@ $bot->onCommand("help@{$_ENV['BOT_USERNAME']}", HelpHandle::class);
 
 // Bans
 $bot->group(function (Nutgram $bot) {
-    $bot->onCommand('ban', function (Nutgram $bot) {
+    $bot->onText('/ban(?!\s+@)(?:\s+(.*))?', function (Nutgram $bot, ?string $reason) {
         $banHandle = new BanHandle($bot);
-        $banHandle->banByReply();
+        $banHandle->banByReply($reason);
     });
-    $bot->onCommand('dban', function (Nutgram $bot) {
+    $bot->onText('/dban(?:\s+(.*))?', function (Nutgram $bot, ?string $reason) {
         $banHandle = new BanHandle($bot);
-        $banHandle->banByReply(true);
+        $banHandle->banByReply($reason, true);
     });
     $bot->onCommand('unban', function (Nutgram $bot) {
         $banHandle = new BanHandle($bot);
         $banHandle->unbanByReply();
     });
-    $bot->onCommand('ban @{username}', function (Nutgram $bot, string $username) {
+    $bot->onText('/ban @{username}(?:\s+(.*))?', function (Nutgram $bot, string $username, ?string $reason) {
         $banHandle = new BanHandle($bot);
-        $banHandle->banByUserName($username);
+        $banHandle->banByUserName($username, $reason);
     });
     $bot->onCommand("unban @{username}", function (Nutgram $bot, string $username) {
         $banHandle = new BanHandle($bot);

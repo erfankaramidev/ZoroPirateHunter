@@ -14,7 +14,7 @@ class WarningHandle
     {
     }
 
-    public function warnByReply(bool $deleteMessage = false, string $reason = '')
+    public function warnByReply(bool $deleteMessage = false, string $reason)
     {
         $repliedMessageUserId = $this->bot->message()->reply_to_message->from->id ?? null;
 
@@ -61,9 +61,10 @@ class WarningHandle
             );
 
             $userWarns = count($userPreviousWarns) + 1;
+            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                text: "Watch your mouth, <a href=\"tg://user?id=$repliedMessageUserId\">$name</a>! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️",
+                text: "Watch your mouth, <a href=\"tg://user?id=$repliedMessageUserId\">$name</a>! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️\nReason:\n$reason",
                 reply_to_message_id: $this->bot->messageId(),
                 parse_mode: ParseMode::HTML,
                 reply_markup: $removeWarnBtn
@@ -106,18 +107,17 @@ class WarningHandle
 
             $this->bot->sendMessage(
                 text: "That’s it, @$username. {$this->getWarnLimit()}/{$this->getWarnLimit()}. Guess you’re outta here. Don’t let the door hit you on the way out 😏✌️",
-                parse_mode: ParseMode::HTML,
                 reply_to_message_id: $this->bot->messageId()
             );
         } else {
             $this->warnUser($user['user_id'], $reason);
 
             $userWarns = count($userPreviousWarns) + 1;
+            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                text: "Watch your mouth, @$username! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️",
+                text: "Watch your mouth, @$username! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️\nReason:\n$reason",
                 reply_to_message_id: $this->bot->messageId(),
-                parse_mode: ParseMode::HTML
             );
         }
     }
