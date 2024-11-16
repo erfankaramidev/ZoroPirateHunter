@@ -14,7 +14,7 @@ class WarningHandle
     {
     }
 
-    public function warnByReply(bool $deleteMessage = false, string $reason)
+    public function warnByReply(string $reason, bool $deleteMessage = false)
     {
         $repliedMessageUserId = $this->bot->message()->reply_to_message->from->id ?? null;
 
@@ -61,7 +61,7 @@ class WarningHandle
             );
 
             $userWarns = count($userPreviousWarns) + 1;
-            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
+            $reason = ! empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
                 text: "Watch your mouth, <a href=\"tg://user?id=$repliedMessageUserId\">$name</a>! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️\nReason:\n$reason",
@@ -113,7 +113,7 @@ class WarningHandle
             $this->warnUser($user['user_id'], $reason);
 
             $userWarns = count($userPreviousWarns) + 1;
-            $reason = !empty($reason) ? $reason : "Tch, no reason given.";
+            $reason = ! empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
                 text: "Watch your mouth, @$username! That’s $userWarns/{$this->getWarnLimit()}. Don’t push your luck ⚔️\nReason:\n$reason",
@@ -175,7 +175,7 @@ class WarningHandle
     {
         $userId = $this->bot->message()->reply_to_message->from->id ?? $this->bot->userId();
         $name = $this->bot->message()->reply_to_message->from->first_name ?? $this->bot->user()->first_name;
-        
+
         $userWarns = $this->userWarns($userId);
 
         if (count($userWarns) === 0) {
@@ -242,6 +242,20 @@ class WarningHandle
         );
     }
 
+    public function setWarnLimit(string|int $warnLimit)
+    {
+        $db = new Database();
+
+        $db->query("UPDATE settings SET `value` = ?, updated_at = CURRENT_TIMESTAMP() WHERE `key` = 'warnlimit'", [
+            $warnLimit
+        ]);
+
+        $this->bot->sendMessage(
+            "The warn limit’s been bumped to $warnLimit. Looks like someone’s making room for more trouble 🙄.",
+            reply_to_message_id: $this->bot->messageId()
+        );
+    }
+
     private function warnUser(string|int $userId, string $reason)
     {
         $db = new Database();
@@ -301,7 +315,7 @@ class WarningHandle
         }
 
         $db = new Database();
-        $db->query("INSERT INTO bans (user_id) VALUES (?)", [
+        $db->query("INSERT INTO bans (user_id) VALUES (?) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP()", [
             $userId
         ]);
 

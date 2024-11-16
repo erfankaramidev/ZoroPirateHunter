@@ -64,7 +64,7 @@ $bot->group(function (Nutgram $bot) {
 $bot->group(function (Nutgram $bot) {
     $bot->onText('/warn(?!\s+@)(?:\s+(.*))?', function (Nutgram $bot, $reason) {
         $warningHandler = new WarningHandle($bot);
-        $warningHandler->warnByReply(reason: $reason ?? '');
+        $warningHandler->warnByReply($reason ?? '');
     });
     $bot->onText('/warn @{username}(?:\s+(.*))?', function (Nutgram $bot, string $username, $reason) {
         $warningHandler = new WarningHandle($bot);
@@ -89,6 +89,10 @@ $bot->group(function (Nutgram $bot) {
     $bot->onText('/resetwarn @{username}', function (Nutgram $bot, string $username) {
         $warningHandler = new WarningHandle($bot);
         $warningHandler->resetWarnByUsername($username);
+    });
+    $bot->onText("/warnlimit {warnLimit}", function (Nutgram $bot, $warnLimit) {
+        $warningHandler = new WarningHandle($bot);
+        $warningHandler->setWarnLimit($warnLimit);
     });
 })->middleware(IsAdminMiddleware::class);
 
