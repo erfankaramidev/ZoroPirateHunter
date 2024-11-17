@@ -1,8 +1,8 @@
 <?php
 
 use SergiX44\Nutgram\Nutgram;
-use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle};
-use App\Middlewares\{IsAdminMiddleware};
+use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle, JoinHandle, WelcomeHandle};
+use App\Middlewares\{IsAdminMiddleware, IsBotAdmin};
 use App\CallbackQueryData\{BanCallback, MuteCallback, WarningCallback};
 
 // Commands
@@ -11,6 +11,12 @@ $bot->onCommand("start@{$_ENV['BOT_USERNAME']}", StartHandle::class);
 
 $bot->onCommand('help', HelpHandle::class);
 $bot->onCommand("help@{$_ENV['BOT_USERNAME']}", HelpHandle::class);
+
+// On user join
+$bot->onNewChatMembers(JoinHandle::class);
+
+// Set welcome message
+$bot->onCommand('setwelcome {welcomeMessage}', WelcomeHandle::class)->middleware(IsAdminMiddleware::class);
 
 // Bans
 $bot->group(function (Nutgram $bot) {
@@ -34,7 +40,7 @@ $bot->group(function (Nutgram $bot) {
         $banHandle = new BanHandle($bot);
         $banHandle->unbanByUserName($username);
     });
-})->middleware(IsAdminMiddleware::class);
+})->middleware(IsBotAdmin::class)->middleware(IsAdminMiddleware::class);
 
 // Mutes
 $bot->group(function (Nutgram $bot) {
@@ -58,7 +64,7 @@ $bot->group(function (Nutgram $bot) {
         $muteHandle = new MuteHandle($bot);
         $muteHandle->unmuteByUsername($username);
     });
-})->middleware(IsAdminMiddleware::class);
+})->middleware(IsBotAdmin::class)->middleware(IsAdminMiddleware::class);
 
 // Warnings
 $bot->group(function (Nutgram $bot) {
@@ -94,7 +100,7 @@ $bot->group(function (Nutgram $bot) {
         $warningHandler = new WarningHandle($bot);
         $warningHandler->setWarnLimit($warnLimit);
     });
-})->middleware(IsAdminMiddleware::class);
+})->middleware(IsBotAdmin::class)->middleware(IsAdminMiddleware::class);
 
 $bot->onCommand('warns', function (Nutgram $bot) {
     $warningHandler = new WarningHandle($bot);
@@ -103,7 +109,7 @@ $bot->onCommand('warns', function (Nutgram $bot) {
 $bot->onCallbackQueryData("warn:rmwarn{userId}", function (Nutgram $bot, $userId) {
     $warningHandler = new WarningHandle($bot);
     $warningHandler->removeWarnByCallback($userId);
-})->middleware(function (Nutgram $bot, $next) {
+})->middleware(IsBotAdmin::class)->middleware(function (Nutgram $bot, $next) {
     $adminMiddleware = new IsAdminMiddleware(true);
     $adminMiddleware($bot, $next);
 });

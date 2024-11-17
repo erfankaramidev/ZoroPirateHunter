@@ -40,13 +40,11 @@ CREATE TABLE IF NOT EXISTS `warnings` (
 INSERT INTO `settings` (`key`, `value`)
 VALUES
     (
-        'start_message',
-        'Oi, I\'m Roronoa Zoro, the Pirate Hunter. 🗡\n' 
-        'I ain\'t got time for nonsense, but if you need help defending your crew from rule breakers, ' 
-        'I’m your guy! ⚔️ Use /help to see how I can slice down your enemies! 💥\n\n' 
-        'And if you feel like showin\' some appreciation for the captain who set this up, ' 
-        'use /donate to toss some coins their way. 🏴‍☠️💰\n\n' 
-        'Now, let\'s get to it!'
+        "start_message",
+        "Oi, I'm Roronoa Zoro, the Pirate Hunter. 🗡\n" 
+        "I ain't got time for nonsense, but if you need help defending your crew from rule breakers, "
+        "I’m your guy! ⚔️ Use /help to see how I can slice down your enemies! 💥\n\n"
+        "Now, let's get to it!"
     ) 
 ON DUPLICATE KEY UPDATE
     `value` = VALUES(`value`);
@@ -54,5 +52,24 @@ ON DUPLICATE KEY UPDATE
 INSERT INTO `settings` (`key`, `value`)
 VALUES
     ('warnlimit', '3') 
+ON DUPLICATE KEY UPDATE
+    `value` = VALUES(`value`);
+
+INSERT INTO `settings` (`key`, `value`)
+VALUES
+    (
+        'bot_join_message',
+        "Oi, I’m Roronoa Zoro, the Pirate Hunter. 🗡\n"
+        "Thanks for adding me to your crew. If you want me to actually do my job, make me an admin already. ⚔️ Let’s cut through the nonsense and get to it!"
+    )
+ON DUPLICATE KEY UPDATE
+    `value` = VALUES(`value`);
+
+INSERT INTO `settings` (`key`, `value`)
+VALUES
+    (
+        'welcome_message',
+        "Oi {first_name}, welcome to the crew. Make sure you follow the rules—or else. 🗡😏"
+    )
 ON DUPLICATE KEY UPDATE
     `value` = VALUES(`value`);
