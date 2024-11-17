@@ -4,6 +4,7 @@ use SergiX44\Nutgram\Nutgram;
 use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle, JoinHandle, WelcomeHandle};
 use App\Middlewares\{IsAdminMiddleware, IsBotAdmin};
 use App\CallbackQueryData\{BanCallback, MuteCallback, WarningCallback};
+use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
 
 // Commands
 $bot->onCommand('start', StartHandle::class);
@@ -128,3 +129,34 @@ $bot->onCallbackQueryData("back:start", function (Nutgram $bot) {
     $helpHandle = new HelpHandle();
     $helpHandle($bot, true);
 });
+
+// On error
+if ($_ENV['ENV'] === 'production') {
+    $bot->onException(function (Nutgram $bot, \Throwable $exception) {
+        $error = date("Y-m-d H:i:s") . " - " . $exception->getMessage() . " - " . $exception->getCode();
+
+        $bot->sendMessage(
+            $error,
+            $_ENV['OWNER_CHAT_ID']
+        );
+        error_log($exception);
+
+        $bot->sendMessage(
+            "Oops, the bot ran into an issue and crashed. Don’t worry, the details are being sent to the bot owner to fix it. 🚧"
+        );
+    });
+
+    $bot->onApiError(function (Nutgram $bot, TelegramException $exception) {
+        $error = date("Y-m-d H:i:s") . " - " . $exception->getMessage() . " - " . $exception->getCode();
+
+        $bot->sendMessage(
+            $error,
+            $_ENV['OWNER_CHAT_ID']
+        );
+        error_log($exception);
+
+        $bot->sendMessage(
+            "Oops, the bot ran into an issue and crashed. Don’t worry, the details are being sent to the bot owner to fix it. 🚧",
+        );
+    });
+}

@@ -19,7 +19,7 @@ class MuteHandle
 
         if (! $repliedMessageUserId) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -74,7 +74,7 @@ class MuteHandle
 
         if (! $user) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -124,7 +124,7 @@ class MuteHandle
 
         if (! $repliedMessageUserId) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -162,7 +162,7 @@ class MuteHandle
 
         if (! $user) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;

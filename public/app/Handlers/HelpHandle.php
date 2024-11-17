@@ -11,7 +11,7 @@ class HelpHandle
 {
     public function __invoke(Nutgram $bot, bool $edit = false)
     {
-        $messageToSend = "Oi, you need <i>help</i> huh? Fine, listen up.\n\nFrom the <b>buttons</b> below, you can get to all the commands you need. Just use / before them to make 'em work. ⚔️\n\n<b>Useful commands:</b>\n\n- /start: Starts the bot. You’ve probably done this already.\n- /help: I’ll show you all the commands I’ve got.\n- /donate: Want to support the one who built this? Here’s how.\n\nIf you run into any bugs, or got questions, message @erfankaramidev. Don't waste my time with nonsense! 🗡";
+        $messageToSend = "Oi, you need <i>help</i> huh? Fine, listen up.\n\nFrom the <b>buttons</b> below, you can get to all the commands you need. Just use / before them to make 'em work. ⚔️\n\n<b>Useful commands:</b>\n\n- /start: Starts the bot. You’ve probably done this already.\n- /help: I’ll show you all the commands I’ve got.\n\nIf you run into any bugs, or got questions, message @erfankaramidev. Don't waste my time with nonsense! 🗡";
 
         $keyboard = InlineKeyboardMarkup::make()->addRow(
             InlineKeyboardButton::make('Ban', callback_data: 'help:ban'),

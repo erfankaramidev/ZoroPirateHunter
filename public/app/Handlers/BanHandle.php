@@ -20,7 +20,7 @@ class BanHandle
 
         if (! $repliedMessageUserId) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -31,7 +31,7 @@ class BanHandle
         foreach ($admins as $admin) {
             if ($admin->user->id == $repliedMessageUserId) {
                 $this->bot->sendMessage(
-                    "Oh? You’re gonna ban an <i>admin</i>? Bold move. Let’s see how that goes. 😒⚔️",
+                    "Oh? You’re gonna ban an <i>admin</i>? Bold move. Let’s see how that goes 😒⚔️",
                     reply_to_message_id: $this->bot->messageId(),
                     parse_mode: ParseMode::HTML
                 );
@@ -55,7 +55,7 @@ class BanHandle
             $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                "<a href=\"tg://user?id=$repliedMessageUserId\">$name</a> is banned. Good, that’s less nonsense to deal with. 🚫\nReason:\n$reason",
+                "<a href=\"tg://user?id=$repliedMessageUserId\">$name</a> is banned. Good, that’s less nonsense to deal with 🚫\nReason:\n$reason",
                 parse_mode: ParseMode::HTML,
                 reply_to_message_id: $this->bot->messageId()
             );
@@ -76,7 +76,7 @@ class BanHandle
 
         if (! $user) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -87,7 +87,7 @@ class BanHandle
         foreach ($admins as $admin) {
             if ($admin->user->id == $user['user_id']) {
                 $this->bot->sendMessage(
-                    "Oh? You’re gonna ban an <i>admin</i>? Bold move. Let’s see how that goes. 😒⚔️",
+                    "Oh? You’re gonna ban an <i>admin</i>? Bold move. Let’s see how that goes 😒⚔️",
                     reply_to_message_id: $this->bot->messageId(),
                     parse_mode: ParseMode::HTML
                 );
@@ -110,7 +110,7 @@ class BanHandle
             $reason = !empty($reason) ? $reason : "Tch, no reason given.";
 
             $this->bot->sendMessage(
-                "@{$user['username']} is banned. Good, that’s less nonsense to deal with. 🚫\nReason:\n$reason",
+                "@{$user['username']} is banned. Good, that’s less nonsense to deal with 🚫\nReason:\n$reason",
                 reply_to_message_id: $this->bot->messageId()
             );
         } else
@@ -123,7 +123,7 @@ class BanHandle
 
         if (! $repliedMessageUserId) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
@@ -154,7 +154,7 @@ class BanHandle
 
         if (! $user) {
             $this->bot->sendMessage(
-                "User not found. 🤨 Who are you looking for, a ghost?",
+                "User not found 🤨. Who are you looking for, a ghost?",
                 reply_to_message_id: $this->bot->messageId()
             );
             return;
