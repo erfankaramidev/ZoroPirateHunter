@@ -1,7 +1,7 @@
 <?php
 
 use SergiX44\Nutgram\Nutgram;
-use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle, JoinHandle, WelcomeHandle};
+use App\Handlers\{BanHandle, HelpHandle, MuteHandle, UserHandle, StartHandle, WarningHandle, JoinHandle, WelcomeHandle, SourceHandle};
 use App\Middlewares\{IsAdminMiddleware, IsBotAdmin};
 use App\CallbackQueryData\{BanCallback, MuteCallback, WarningCallback};
 use SergiX44\Nutgram\Telegram\Exceptions\TelegramException;
@@ -102,7 +102,6 @@ $bot->group(function (Nutgram $bot) {
         $warningHandler->setWarnLimit($warnLimit);
     });
 })->middleware(IsBotAdmin::class)->middleware(IsAdminMiddleware::class);
-
 $bot->onCommand('warns', function (Nutgram $bot) {
     $warningHandler = new WarningHandle($bot);
     $warningHandler->warns();
@@ -114,6 +113,9 @@ $bot->onCallbackQueryData("warn:rmwarn{userId}", function (Nutgram $bot, $userId
     $adminMiddleware = new IsAdminMiddleware(true);
     $adminMiddleware($bot, $next);
 });
+
+// Bot source code
+$bot->onCommand('sourcecode', SourceHandle::class);
 
 // Register new users to the database
 $bot->onMessage(function (Nutgram $bot) {
