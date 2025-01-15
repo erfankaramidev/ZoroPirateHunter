@@ -13,7 +13,8 @@ class JoinHandle
     public function __invoke(Nutgram $bot)
     {
         $db = new Database();
-
+        $userHandler = new UserHandle($bot);
+        
         if ($bot->message()->new_chat_members[0]->id === $bot->getMe()->id) {
             if ($bot->chatId() != $_ENV['GROUP_CHAT_ID']) {
                 $bot->sendMessage(
@@ -33,6 +34,8 @@ class JoinHandle
 
             return;
         }
+        
+        $userHandler->checkUser();
 
         $firstName = "<a href=\"tg://user?id={$bot->userId()}\">{$bot->user()->first_name}</a>";
 

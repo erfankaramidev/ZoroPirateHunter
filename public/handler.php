@@ -114,6 +114,15 @@ $bot->onCallbackQueryData("warn:rmwarn{userId}", function (Nutgram $bot, $userId
     $adminMiddleware($bot, $next);
 });
 
+$bot->onText("/say {message}", function (Nutgram $bot, $message) {
+    $bot->deleteMessage($bot->chatId(), $bot->messageId());
+
+    $bot->sendMessage(
+        $message,
+        reply_to_message_id: $bot->message()->reply_to_message->message_id,
+    );
+})->middleware(IsAdminMiddleware::class);
+
 // Bot source code
 $bot->onCommand('sourcecode', SourceHandle::class);
 
